@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html xmlns:th="http://thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+
+<head>
+    <!--Import Google Icon Font-->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+    <!--Import materialize.css-->
+    <link type="text/css" rel="stylesheet" href="materialize/css/materialize.min.css" media="screen,projection" />
+    <!--Let browser know website is optimized for mobile-->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="estilos.css">
+    <title>Montar curriculo</title>
+</head>
+
+<body>
+    <h2>Montar meu currículo</h2>
+    <div class="container" style="margin-top: 50px;">
+
+        <div class="row">
+            <div class="input-field col s12">
+                <input type="text" id="nome" name="nome" onblur="nomeCaixaAlta()">
+                <label for="nome">Nome completo</label>
+            </div>
+        </div>
+
+        <ul class="collapsible">
+            <li>
+                <div class="collapsible-header">
+                    <i class="material-icons">assignment_ind</i>
+                    Dados pessoais
+                </div>
+
+                <div class="collapsible-body">
+
+                    <div class="row">
+                        <div class="input-field col s12">
+                            <input type="text" id="endereco" name="endereco">
+                            <label for="endereco">Endereço completo</label>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="input-field col s12">
+                            <input type="email" id="email" name="email">
+                            <label for="email">E-mail</label>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="input-field col s6">
+                            <input type="text" id="telCel" name="telCel">
+                            <label for="telCel">Tel. Celular</label>
+                        </div>
+
+                        <div class="input-field col s6">
+                            <input type="text" id="telRes" name="telRes">
+                            <label for="telRes">Tel. Residencial</label>
+                        </div>
+                    </div>
+
+                </div>
+            </li>
+        </ul>
+
+        <!--FORMULÁRIO FORMAÇÃO-->
+        <ul class="collapsible">
+            <li>
+                <div class="collapsible-header">
+                    <i class="material-icons">school</i>
+                    Formação
+                </div>
+
+                <div class="collapsible-body">
+                    <div class="row">
+                        <div class="input-field col s12">
+                            <input type="text" id="curso" name="curso">
+                            <label for="curso">Curso</label>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="input-field col s6">
+                            <input type="text" id="escola" name="escola">
+                            <label for="escola">Instituição</label>
+                        </div>
+
+                        <div class="input-field col s6">
+                            <select id="situacao">
+                                <option value="0"></option>
+                                <option value="1">em andamento</option>
+                                <option value="2">concluído</option>
+                            </select>
+                            <label>Situação</label>
+                        </div>
+                    </div>
+
+                    <div class=" row">
+                        <div class="input-field col s12">
+                            <button id="adicionarFormacao" name="adicionarFormacao" class="btn adicionar"
+                                title="Adicionar formação">
+                                adicionar
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="listaDeFormacao"></div>
+
+                </div>
+            </li>
+        </ul>
+        <!-- FIM FORMULÁRIO FORMAÇÃO-->
+
+        <!--EXPERIENCIA PROFISSIONAL-->
+        <ul class="collapsible">
+            <li>
+                <div class="collapsible-header">
+                    <i class="material-icons">work</i>
+                    Experiência profissional
+                </div>
+
+                <div class="collapsible-body">
+
+                    <div class="row">
+                        <div class="input-field col s6">
+                            <input type="text" id="empresa" name="empresa">
+                            <label for="empresa">Empresa</label>
+                        </div>
+
+                        <div class="input-field col s6">
+                            <input type="text" id="cargo" name="cargo">
+                            <label for="cargo">Cargo</label>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="input-field col s6">
+                            <input type="date" id="inicio" name="inicio">
+                            <label for="inicio">Data inicial</label>
+                        </div>
+
+                        <div class="input-field col s6">
+                            <input type="date" id="final" name="final">
+                            <label for="final">Data final</label>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="input-field col s12">
+                            <textarea id="atuacao" class="materialize-textarea"></textarea>
+                            <label for="atuacao">Atuação</label>
+                        </div>
+                    </div>
+
+                    <div class=" row">
+                        <div class="input-field col s12">
+                            <button id="adicionarProfissao" name="adicionarProfissao" class="btn adicionar"
+                                title="Adicionar profissão">
+                                adicionar
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="listaDeProfissao"></div>
+
+                </div>
+            </li>
+        </ul>
+        <!--FIM EXPERIENCIA PROFISSIONAL-->
+
+        <!--ATIVIDADES COMPLEMENTARES-->
+        <ul class="collapsible">
+            <li>
+
+                <div class="collapsible-header">
+                    <i class="material-icons">style</i>
+                    Atividades complementares
+                </div>
+
+                <div class="collapsible-body">
+
+                    <div class="row">
+                        <div class="input-field col s12">
+                            <textarea id="conteudo" class="materialize-textarea"></textarea>
+                            <label for="conteudo">Descrição</label>
+                        </div>
+                    </div>
+
+                    <div class=" row">
+                        <div class="input-field col s12">
+                            <button id="adicionarAtivComp" name="adicionarAtivComp" class="btn adicionar"
+                                title="Adicionar atividade complementar">
+                                adicionar
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="listaDeAtvCompl"></div>
+                </div>
+            </li>
+        </ul>
+        <!-- FIM ATIVIDADES COMPLEMENTARES-->
+        <hr>
+        <!-- <button id="salvar" class="btn" title="Salvar">Salvar</button> -->
+        <button id="imprimir" class="btn" title="Imprimir">Imprimir</button>
+        <br><br>
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+    <script type="text/javascript" src="materialize/js/materialize.min.js"></script>
+
+    <script type="text/javascript" src="js/script.js"></script>
+    <script type="text/javascript" src="js/curriculoController.js"></script>
+</body>
+
+</html>
