@@ -11,12 +11,6 @@ $(document).ready(function () {
     $('select').formSelect();
 });
 
-$(document).ready(function () {
-    $("button[name='adicionarFormacao']").click(function(){
-        $('select').formSelect();
-    });
-});
-
 // -- //
 function nomeCaixaAlta() {
     var nomeCompleto = document.getElementById("nome").value;

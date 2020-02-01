@@ -19,6 +19,7 @@ var formacao;
 var profissao;
 var complemento;
 
+function f(str) { return str.split("-").reduce(function (p, c) { return c + "-" + p }) }
 
 function adicionarNaLista(objeto, tipo) {
     if (tipo == "F") {
@@ -50,10 +51,10 @@ function montarConteudo(tipo) {
         for (object of collectionProfissao) {
             var elemento = "Empresa: " + object.empresa + ", Cargo: " + object.cargo + ", ";
             if (object.dataInicial.length > 0) {
-                elemento = elemento + "Inicio: " + object.dataInicial + ", ";
+                elemento = elemento + "Inicio: " + f(object.dataInicial) + ", ";
             }
             if (object.dataFinal.length > 0) {
-                elemento = elemento + "Final: " + object.dataFinal + ", ";
+                elemento = elemento + "Final: " + f(object.dataFinal) + ", ";
             }
             elemento = elemento + "Atuação: " + object.atuacao + ".";
             index = collectionProfissao.indexOf(object);
@@ -74,20 +75,32 @@ function mostrarConteudo(elemento, tipo) {
     var info = document.createTextNode(elemento);
     element.appendChild(info);
 
-    var btnDelete = document.createElement("a");
-    btnDelete.setAttribute("href", "#");
+    var btnDelete = document.createElement("button");
+    btnDelete.setAttribute("class", "btn");
+    btnDelete.setAttribute("style", "background-color: red;")
     var texto = document.createTextNode("Excluir");
     btnDelete.setAttribute("onclick", "removerElemento(" + index + "," + "\"" + tipo + "\"" + ")");
     btnDelete.appendChild(texto);
 
+    var btnEditar = document.createElement("button");
+    btnEditar.setAttribute("class", "btn");
+    var msg = document.createTextNode("Editar");
+    btnEditar.setAttribute("name", "editarFormacao");
+    btnEditar.setAttribute("onclick", "editarElemento(" + index + "," + "\"" + tipo + "\"" + ")");
+    btnEditar.appendChild(msg);
+
+
     if (tipo == "F") {
         elementoDeFormacao.appendChild(btnDelete);
+        elementoDeFormacao.appendChild(btnEditar);
         elementoDeFormacao.appendChild(element);
     } else if (tipo == "P") {
         elementoDeProfissao.appendChild(btnDelete);
+        elementoDeProfissao.appendChild(btnEditar);
         elementoDeProfissao.appendChild(element);
     } else if (tipo == "C") {
         elementoDeAtvCompl.appendChild(btnDelete);
+        elementoDeAtvCompl.appendChild(btnEditar);
         elementoDeAtvCompl.appendChild(element);
     }
 }
@@ -103,14 +116,39 @@ function removerElemento(index, tipo) {
         }
         montarConteudo(tipo);
     }
+}
 
+function editarElemento(index, tipo) {
+    if (tipo == "F") {
+        var item = collectionFormacao[index];
+        document.getElementById("curso").value = item.curso;
+        document.getElementById("escola").value = item.escola;
+        // -- setar o select com o valor do objeto -- //
+        $('#situacao').val(item.situacao);
+        $('#situacao').formSelect();
+        collectionFormacao.splice(index, 1);
+    } else if (tipo == "P") {
+        var item = collectionProfissao[index];
+        document.getElementById("empresa").value = item.empresa;
+        document.getElementById("cargo").value = item.cargo;
+        document.getElementById("inicio").value = item.dataInicial;
+        document.getElementById("final").value = item.dataFinal;
+        document.getElementById("atuacao").value = item.atuacao;
+        collectionProfissao.splice(index, 1);
+    } else if (tipo == "C") {
+        var item = collectionAtvComplementar[index];
+        document.getElementById("conteudo").value = item.conteudo;
+        collectionAtvComplementar.splice(index, 1);
+    }
+    montarConteudo(tipo);
 }
 
 function limparForm(tipo) {
     if (tipo == "F") {
         document.getElementById("curso").value = "";
         document.getElementById("escola").value = "";
-        document.getElementById("situacao").value = "0";
+        $('#situacao').val(0);
+        $('#situacao').formSelect();
     } else if (tipo == "P") {
         document.getElementById("empresa").value = "";
         document.getElementById("cargo").value = "";
@@ -180,6 +218,14 @@ function validarProfissao() {
         alert("Informe a atuação");
         return false;
     } else {
+        if (profissao.dataInicial.length > 0 && profissao.dataFinal.length > 0) {
+            var d1 = profissao.dataInicial.replace(/-/g, "");
+            var d2 = profissao.dataFinal.replace(/-/g, "");
+            if (d1 > d2) {
+                alert("Data final não pode ser menor que a data inicial");
+                return false;
+            }
+        }
         return true;
     }
 }
@@ -243,7 +289,6 @@ function validar() {
         return true;
     }
 }
-function f(str) { return str.split("-").reduce(function (p, c) { return c + "-" + p }) }
 
 function imprimir() {
     var pdf = window.open('', '', 'height=700,width=700');
@@ -288,9 +333,6 @@ function imprimir() {
             pdf.document.write("<li><b>Descrição: </b>" + object.conteudo + ".</li><br>");
         }
     }
-
-
-
     pdf.document.close();
     pdf.print();
 }
