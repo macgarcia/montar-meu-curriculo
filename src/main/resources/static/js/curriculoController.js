@@ -18,8 +18,9 @@ var dados;
 var formacao;
 var profissao;
 var complemento;
+var modelo;
 
-function f(str) { return str.split("-").reduce(function (p, c) { return c + "-" + p }) }
+function tratarData(str) { return str.split("-").reduce(function (p, c) { return c + "-" + p }) }
 
 function adicionarNaLista(objeto, tipo) {
     if (tipo == "F") {
@@ -51,10 +52,10 @@ function montarConteudo(tipo) {
         for (object of collectionProfissao) {
             var elemento = "Empresa: " + object.empresa + ", Cargo: " + object.cargo + ", ";
             if (object.dataInicial.length > 0) {
-                elemento = elemento + "Inicio: " + f(object.dataInicial) + ", ";
+                elemento = elemento + "Inicio: " + tratarData(object.dataInicial) + ", ";
             }
             if (object.dataFinal.length > 0) {
-                elemento = elemento + "Final: " + f(object.dataFinal) + ", ";
+                elemento = elemento + "Final: " + tratarData(object.dataFinal) + ", ";
             }
             elemento = elemento + "Atuação: " + object.atuacao + ".";
             index = collectionProfissao.indexOf(object);
@@ -259,7 +260,18 @@ btnAdicionarAtvComplementares.onclick = recuperarComplemento;
 function iniciar() {
     recuperarDados();
     if (validar()) {
-        imprimir();
+        switch (modelo.value) {
+            case "1":
+                modelo01();
+                break;
+            case "2":
+                modelo02();
+                break;
+            case "3":
+                modelo03();
+                break;
+        }
+
     }
 }
 
@@ -270,6 +282,8 @@ function recuperarDados() {
     dados.email = document.getElementById("email").value;
     dados.telCel = document.getElementById("telCel").value;
     dados.telRes = document.getElementById("telRes").value;
+
+    modelo = document.querySelector("input[name='modelo']:checked");
 }
 
 function validar() {
@@ -285,12 +299,15 @@ function validar() {
     } else if (dados.telCel.length == 0) {
         alert("Informe o numero do telefone celular");
         return false;
+    } else if (modelo == null) {
+        alert("Selecione o modelo do curriculo");
+        return false;
     } else {
         return true;
     }
 }
 
-function imprimir() {
+function modelo01() {
     var pdf = window.open('', '', 'height=700,width=700');
     pdf.document.write("<p style='text-align: center; font-weight: bolder;text-decoration: underline;'>" + dados.nome + "</p><br>");
     pdf.document.write("<b>Dados pessoais</b><hr>");
@@ -301,38 +318,164 @@ function imprimir() {
     pdf.document.write("<li><b>Telefones:</b> CEL: " + dados.telCel + " / RES: " + dados.telRes + "</li>");
     pdf.document.write("</ul>");
 
-    pdf.document.write("<b>Formação</b><hr>");
-    pdf.document.write("<ul>");
     if (collectionFormacao.length > 0) {
+        pdf.document.write("<b>Formação</b><hr>");
+        pdf.document.write("<ul>");
         for (object of collectionFormacao) {
             pdf.document.write("<li><b>Curso:</b> " + object.curso + ", <b>instituição:</b> "
                 + object.escola + ", <b>situação:</b> " + (object.situacao == 1 ? "em andamento." : "concluído.") + "</li>");
         }
+        pdf.document.write("</ul>");
     }
-    pdf.document.write("</ul>");
-    pdf.document.write("<b>Experiência profissional</b><hr>");
-    pdf.document.write("<ul>");
+    
     if (collectionProfissao.length > 0) {
+        pdf.document.write("<b>Experiência profissional</b><hr>");
+        pdf.document.write("<ul>");
         for (object of collectionProfissao) {
             pdf.document.write("<li>");
             pdf.document.write("<b>Empresa: </b>" + object.empresa + " - <b>cargo: </b>" + object.cargo + "<br>");
             pdf.document.write("<b>Atuação: </b>" + object.atuacao + "<br>");
             if (object.dataInicial.length > 0 && object.dataFinal.length > 0) {
-                pdf.document.write("<b>Periodo: </b>" + f(object.dataInicial) + " à " + f(object.dataFinal) + "<br>");
+                pdf.document.write("<b>Periodo: </b>" + tratarData(object.dataInicial) + " à " + tratarData(object.dataFinal) + "<br>");
             } else if (object.dataInicial.length > 0) {
-                pdf.document.write("<b>Inicio: </b>" + f(object.dataInicial) + "<br>");
+                pdf.document.write("<b>Inicio: </b>" + tratarData(object.dataInicial) + "<br>");
             }
             pdf.document.write("</li>");
         }
+        pdf.document.write("</ul>");
     }
-    pdf.document.write("</ul>");
-    pdf.document.write("<b>Atividades complementares</b><hr>");
-    pdf.document.write("<ul>");
+
     if (collectionAtvComplementar.length > 0) {
+        pdf.document.write("<b>Atividades complementares</b><hr>");
+        pdf.document.write("<ul>");
         for (object of collectionAtvComplementar) {
-            pdf.document.write("<li><b>Descrição: </b>" + object.conteudo + ".</li><br>");
+            pdf.document.write("<li><b>Descrição: </b>" + object.conteudo + ".</li>");
         }
+        pdf.document.write("</ul>");
     }
+    pdf.document.close();
+    pdf.print();
+}
+
+function modelo02() {
+    var pdf = window.open('', '', 'height=700,width=700');
+
+    var estiloBody = "style='font-family: sans-serif;'";
+    var estiloH1 = "style='text-align: center; margin: auto;'";
+    var estiloDiv = "style='text-align: center;'";
+    var estiloTitulo = "style=' margin: auto;width: 100%;height: 20px;text-align: center;background-color: silver;font-family: sans-serif;font-weight: bolder;padding: 2px;border: solid silver 1px;'";
+
+    pdf.document.write("<body" + estiloBody + ">");
+    pdf.document.write("<h1 " + estiloH1 + ">" + dados.nome + "</h1>");
+    pdf.document.write("<hr>");
+    pdf.document.write("<div " + estiloDiv + ">");
+    pdf.document.write("<span> Endereço: " + dados.endereco + "</span><br>");
+    pdf.document.write("<span> Email: " + dados.email + "</span><br>");
+    pdf.document.write("<span> Telofone celular: " + dados.telCel + " / Telefone residencial: " + dados.telRes + "</span><br><br>");
+    pdf.document.write("</div>");
+
+    if (collectionFormacao.length > 0) {
+        pdf.document.write("<div " + estiloTitulo + ">Formação</div>");
+        pdf.document.write("<ul>");
+        for (f of collectionFormacao) {
+            pdf.document.write("<li>" + f.curso + ", " + f.escola + ". Situação: "
+                + (f.situacao == 1 ? "em andamento" : "concluído") + "</li><br>");
+        }
+        pdf.document.write("</ul>");
+    }
+    
+    if (collectionProfissao.length > 0) {
+        pdf.document.write("<div " + estiloTitulo + ">Experiência profissional</div>");
+        pdf.document.write("<ul>");
+        for (p of collectionProfissao) {
+            pdf.document.write("<li>");
+            pdf.document.write("Empresa: " + p.empresa);
+            pdf.document.write(" | Cargo: " + p.cargo + "<br>");
+            pdf.document.write("Atuação: " + p.atuacao + "<br>");
+            if (p.dataInicial.length > 0 && p.dataFinal.length > 0) {
+                pdf.document.write(" Período: " + tratarData(p.dataInicial) + " à " + tratarData(p.dataFinal));
+            } else if (p.dataInicial.length > 0) {
+                pdf.document.write(" Inicio: " + tratarData(p.dataInicial));
+            }
+            pdf.document.write("<br><br></li>");
+        }
+        pdf.document.write("</ul>");
+    }
+    
+    if (collectionAtvComplementar.length > 0) {
+        pdf.document.write("<div " + estiloTitulo + ">Atividades complementares</div>");
+        pdf.document.write("<ul>");
+        for (atv of collectionAtvComplementar) {
+            pdf.document.write("<li>");
+            pdf.document.write("Descrição: " + atv.conteudo);
+            pdf.document.write("<br><br></li>");
+        }
+        pdf.document.write("</ul>");
+    }
+    
+    pdf.document.write("</body>");
+
+    pdf.document.close();
+    pdf.print();
+}
+
+function modelo03() {
+    var estiloDados = "style = 'width: 100%;float: right;text-align: right;font-size: 18px;'";
+    var estiloTitulos = "style = 'width: 100%;margin-top: 10px;float: left;text-align: left;'";
+    var estiloTitulo = "style = 'text-decoration: underline;font-weight: bolder;'";
+
+    var pdf = window.open('', '', 'height=700,width=700');
+    pdf.document.write("<div " + estiloDados + ">");
+    pdf.document.write("<b>" + dados.nome + "</b><br>");
+    pdf.document.write("Endereço: " + dados.endereco + "<br>");
+    pdf.document.write("Telefone celular: " + dados.telCel + " / Telefone residencial: " + dados.telRes + "<br>");
+    pdf.document.write("Email: " + dados.email + "<br><br>");
+    pdf.document.write("</div>");
+
+    if (collectionFormacao.length > 0) {
+        pdf.document.write("<div " + estiloTitulos + ">");
+        pdf.document.write("<span " + estiloTitulo + ">Formação</span><br>");
+        pdf.document.write("<div style='width: 50%; word-wrap: break-word;'>");
+        for (f of collectionFormacao) {
+            pdf.document.write("Curso: " + f.curso + "<br>");
+            pdf.document.write("Instituição: " + f.escola + "<br>");
+            pdf.document.write("Situação: " + (f.curso == 1 ? "em andamento" : "concluído"));
+            pdf.document.write("<br><br>");
+        }
+        pdf.document.write("</div>");
+        pdf.document.write("</div>");
+    }
+
+    if (collectionProfissao.length > 0) {
+        pdf.document.write("<div " + estiloTitulos + ">");
+        pdf.document.write("<span " + estiloTitulo + ">Experiência profissional</span><br>");
+        pdf.document.write("<div style='width: 50%; word-wrap: break-word;'>");
+        for (p of collectionProfissao) {
+            pdf.document.write("Empresa: " + p.empresa + " | Cargo: " + p.cargo + "<br>");
+            pdf.document.write("Atuação: " + p.atuacao + "<br>");
+            if (p.dataInicial.length > 0 && p.dataFinal.length > 0) {
+                pdf.document.write("Periodo: " + tratarData(p.dataInicial) + " à " + tratarData(p.dataFinal));
+            } else if (p.dataInicial.length > 0) {
+                pdf.document.write("Inicio: " + tratarData(p.dataInicial));
+            }
+            pdf.document.write("<br><br>");
+        }
+        pdf.document.write("</div>");
+        pdf.document.write("</div>");
+    }
+
+    if (collectionAtvComplementar.length > 0) {
+        pdf.document.write("<div" + estiloTitulos + ">");
+        pdf.document.write("<span " + estiloTitulo + ">Atividades complementares</span><br>");
+        pdf.document.write("<div style='width: 50%; word-wrap: break-word;'>");
+        for (atv of collectionAtvComplementar) {
+            pdf.document.write("Descrição: " + atv.conteudo);
+            pdf.document.write("<br><br>");
+        }
+        pdf.document.write("</div>");
+        pdf.document.write("</div>");
+    }
+
     pdf.document.close();
     pdf.print();
 }
